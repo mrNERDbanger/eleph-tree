@@ -11,16 +11,14 @@ eleph-tree provides FUSE API version 3 support for macFUSE, enabling modern FUSE
 ```
 eleph-tree/
 ├── macfuse/                    # macFUSE repository with v3 support
-│   ├── Library-3/              # FUSE v3 compatibility layer
-│   │   ├── fuse3.h            # FUSE v3 API header
-│   │   ├── fuse3_compat.c     # Compatibility implementation
-│   │   └── Makefile           # Build system for v3 library
-│   ├── Library-2/              # Original FUSE v2 library (empty)
-│   └── Framework/              # macFUSE framework (empty)
-├── sshfs/                      # SSHFS with FUSE v3 support
-│   ├── sshfs_v3.c             # SSHFS implementation using FUSE v3 API
-│   ├── Makefile_v3            # Build system for SSHFS v3
-│   └── [original sshfs files] # Original SSHFS files
+│   └── Library-3/              # FUSE v3 compatibility layer
+│       ├── fuse3.h            # FUSE v3 API header
+│       ├── fuse3_compat.c     # Compatibility implementation  
+│       ├── hello_fuse3.c      # Example FUSE v3 filesystem
+│       ├── install.sh         # Installation script
+│       ├── Makefile           # Build system for v3 library
+│       └── README.md          # Detailed documentation
+├── sshfs/                      # SSHFS with FUSE v3 support (planned)
 └── README.md                   # This file
 ```
 
@@ -34,13 +32,19 @@ The FUSE v3 compatibility layer (`macfuse/Library-3/`) provides:
 
 ### Key Features
 
-- Full FUSE v3 API compatibility
+- Core FUSE v3 API compatibility
 - Seamless integration with existing macFUSE infrastructure
-- Support for modern FUSE features like:
-  - Enhanced file info structures
-  - Improved buffer management
-  - Extended attributes
-  - Better error handling
+- Enhanced error handling and logging
+- Working example filesystem (hello_fuse3)
+- Easy installation script
+
+### Currently Implemented
+
+- Basic file operations (open, read, write, release)
+- Directory operations (mkdir, rmdir) 
+- File attributes (getattr, mknod)
+- Symbolic links (readlink)
+- File deletion (unlink)
 
 ## Building
 

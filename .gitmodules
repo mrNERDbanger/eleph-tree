@@ -1,6 +1,0 @@
-[submodule "macfuse"]
-	path = macfuse
-	url = https://github.com/osxfuse/osxfuse.git
-[submodule "sshfs"]
-	path = sshfs
-	url = https://github.com/libfuse/sshfs.git
