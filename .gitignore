@@ -1,0 +1,76 @@
+# Compiled Object files
+*.o
+*.obj
+
+# Executables
+*.exe
+*.out
+*.app
+sshfs_v3
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+*.dylib
+*.so
+*.so.*
+libfuse3_compat.dylib*
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Directories
+build/
+dist/
+.build/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Autotools
+autom4te.cache/
+config.log
+config.status
+configure
+aclocal.m4
+Makefile.in
+
+# pkg-config
+*.pc
+
+# Test files
+test_*
+*_test
+
+# Documentation build
+doc/html/
+doc/latex/
+
+# Backup files
+*.bak
+*.backup
+*.tmp
+
+# Mount points for testing
+/mnt/*
+/tmp/mount*

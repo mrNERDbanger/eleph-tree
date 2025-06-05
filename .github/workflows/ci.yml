@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    
+    - name: Install dependencies
+      run: |
+        brew install macfuse libssh2
+    
+    - name: Build FUSE v3 compatibility layer
+      run: |
+        cd macfuse/Library-3
+        make
+    
+    - name: Build SSHFS v3
+      run: |
+        cd sshfs
+        make -f Makefile_v3
+    
+    - name: Run basic tests
+      run: |
+        # Test that libraries were built
+        test -f macfuse/Library-3/libfuse3_compat.dylib
+        test -f sshfs/sshfs_v3
+        
+        # Test library linking
+        otool -L macfuse/Library-3/libfuse3_compat.dylib
+        otool -L sshfs/sshfs_v3
+
+  lint:
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install clang-format
+      run: brew install clang-format
+    
+    - name: Check code formatting
+      run: |
+        find . -name "*.c" -o -name "*.h" | xargs clang-format --dry-run --Werror
