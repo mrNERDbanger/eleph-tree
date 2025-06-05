@@ -51,7 +51,7 @@ check_macfuse() {
 build_library() {
     print_msg $YELLOW "Building FUSE3 compatibility layer..."
     
-    if ! make clean && make; then
+    if ! make; then
         print_msg $RED "Error: Build failed"
         exit 1
     fi

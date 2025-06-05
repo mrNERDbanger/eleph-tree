@@ -1,0 +1,77 @@
+# Makefile for SSHFS with FUSE v3 API support
+
+CC = clang
+CFLAGS = -Wall -Wextra -O2 -g -DFUSE_USE_VERSION=30 -D_FILE_OFFSET_BITS=64
+INCLUDES = -I/usr/local/include -I/opt/homebrew/include
+LDFLAGS = -L/usr/local/lib -L/opt/homebrew/lib
+LIBS = -lfuse3_compat -lssh2 -lpthread
+
+# Check for libssh2
+HAVE_LIBSSH2 := $(shell pkg-config --exists libssh2 2>/dev/null && echo yes)
+
+ifeq ($(HAVE_LIBSSH2),yes)
+    CFLAGS += $(shell pkg-config --cflags libssh2)
+    LIBS += $(shell pkg-config --libs libssh2)
+else
+    # Fallback to default paths
+    INCLUDES += -I/opt/homebrew/include
+    LDFLAGS += -L/opt/homebrew/lib
+endif
+
+# Targets
+TARGETS = sshfs_v3 sshfs_fuse3
+
+# Source files
+DEMO_SOURCES = sshfs_v3.c
+FULL_SOURCES = sshfs_fuse3.c
+
+.PHONY: all clean install demo full test
+
+all: demo
+
+demo: sshfs_v3
+
+full: sshfs_fuse3
+
+# Demo SSHFS (simple example)
+sshfs_v3: $(DEMO_SOURCES)
+	$(CC) $(CFLAGS) $(INCLUDES) $< -o $@ $(LDFLAGS) $(LIBS)
+
+# Full SSHFS with FUSE3
+sshfs_fuse3: $(FULL_SOURCES)
+	$(CC) $(CFLAGS) $(INCLUDES) $< -o $@ $(LDFLAGS) $(LIBS)
+
+clean:
+	rm -f $(TARGETS) *.o
+
+install: sshfs_fuse3
+	install -d /usr/local/bin
+	install -m 755 sshfs_fuse3 /usr/local/bin/
+
+# Test targets
+test-demo: sshfs_v3
+	@echo "🐘 Testing SSHFS v3 Demo..."
+	@echo "Creating test mount point..."
+	@mkdir -p /tmp/sshfs_demo_test
+	@echo "Run: ./sshfs_v3 /tmp/sshfs_demo_test"
+
+test-full: sshfs_fuse3
+	@echo "🐘 Testing SSHFS FUSE3..."
+	@echo "Usage: ./sshfs_fuse3 user@host:path /mount/point"
+	@echo "Example: ./sshfs_fuse3 user@example.com:/home/user /tmp/remote"
+
+# Development helpers
+run-demo: sshfs_v3
+	mkdir -p /tmp/sshfs_demo
+	./sshfs_v3 /tmp/sshfs_demo
+
+check-deps:
+	@echo "Checking dependencies..."
+	@echo -n "FUSE3 compatibility layer: "
+	@if [ -f /usr/local/lib/libfuse3_compat.dylib ]; then echo "✓ Installed"; else echo "✗ Not found"; fi
+	@echo -n "libssh2: "
+	@if pkg-config --exists libssh2 2>/dev/null; then echo "✓ Found"; else echo "✗ Not found (install with: brew install libssh2)"; fi
+	@echo -n "macFUSE: "
+	@if [ -d /usr/local/include/osxfuse ] || [ -d /Library/Frameworks/macFUSE.framework ]; then echo "✓ Installed"; else echo "✗ Not found"; fi
+
+.SUFFIXES: .c .o
